@@ -406,7 +406,7 @@ bool UDPTransportInterface::transform_remote_locator(
     {
         // is_local_locator will return false for multicast addresses as well as
         // remote unicast ones.
-        if (!IPLocator::isMulticast(remote_locator) && !is_remote_locator_allowed(remote_locator)) {
+        if (!is_remote_locator_allowed(remote_locator)) {
             return false;
         }
         

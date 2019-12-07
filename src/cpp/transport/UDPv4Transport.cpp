@@ -455,7 +455,7 @@ bool UDPv4Transport::is_remote_locator_allowed(const Locator_t& locator) const
     {
         return false;
     }
-    if (interface_whitelist_.empty() || IPLocator::isMulticast(locator))
+    if (network_whitelist_.empty() || IPLocator::isMulticast(locator))
     {
         return true;
     }
