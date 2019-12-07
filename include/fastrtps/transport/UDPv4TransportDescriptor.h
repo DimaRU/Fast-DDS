@@ -31,6 +31,7 @@ class TransportInterface;
  *                  fail.
  *
  * - interfaceWhiteList: Lists the allowed interfaces.
+ * - remoteWhiteList: Lists allowed remote networks.
  * @ingroup TRANSPORT_MODULE
  */
 typedef struct UDPv4TransportDescriptor: public UDPTransportDescriptor
