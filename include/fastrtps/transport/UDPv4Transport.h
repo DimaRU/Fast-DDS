@@ -104,12 +104,18 @@ protected:
     //! Checks for whether locator is allowed.
     virtual bool is_locator_allowed(const Locator_t&) const override;
 
+    //! Checks for whether remote locator is allowed.
+    bool is_remote_locator_allowed(const Locator_t& locator) const override;
+
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(const asio::ip::address_v4& ip) const;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
     std::vector<asio::ip::address_v4> interface_whitelist_;
+
+    std::vector<asio::ip::address_v4> network_whitelist_;
+    std::vector<unsigned short> prefix_len_whitelist_;
 
     virtual void set_receive_buffer_size(uint32_t size) override;
     virtual void set_send_buffer_size(uint32_t size) override;

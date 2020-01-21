@@ -63,6 +63,8 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
     uint32_t receiveBufferSize;
     //! Allowed interfaces in an IP string format.
     std::vector<std::string> interfaceWhiteList;
+    //! Allowed remote network in an IP/prefix string format.
+    std::vector<std::string> remoteWhiteList;
     //! Specified time to live (8bit - 255 max TTL)
     uint8_t TTL;
 };
