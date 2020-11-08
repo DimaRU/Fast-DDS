@@ -79,6 +79,9 @@ public:
     //! Must report whether the given locator is allowed by this transport.
     virtual bool is_locator_allowed(const fastrtps::rtps::Locator_t&) const = 0;
 
+    //! Must report whether the given remote locator is allowed by this transport.
+    virtual bool is_remote_locator_allowed(const fastrtps::rtps::Locator_t&) const { return true; };
+
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual fastrtps::rtps::Locator_t RemoteToMainLocal(const fastrtps::rtps::Locator_t& remote) const = 0;
 
