@@ -24,6 +24,8 @@
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <asio/ip/address_v4.hpp>
+#include <asio/ip/network_v4.hpp>
 
 using namespace std;
 using namespace asio;
@@ -120,6 +122,14 @@ UDPv4Transport::UDPv4Transport(
             logError(TRANSPORT, "All whitelist interfaces where filtered out");
             interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
         }
+    }
+    
+    for(auto it = descriptor.remoteWhiteList.begin(); it != descriptor.remoteWhiteList.end(); it++) {
+        auto pos = it->find("/");
+        auto address = it->substr(0, pos);
+        auto prefix_len = it->substr(pos+1, it->length());
+        network_whitelist_.emplace_back(ip::address_v4::from_string(address));
+        prefix_len_whitelist_.emplace_back(std::stoi(prefix_len));
     }
 }
 
@@ -477,6 +487,31 @@ bool UDPv4Transport::is_locator_allowed(
         return true;
     }
     return is_interface_allowed(IPLocator::toIPv4string(locator));
+}
+
+bool UDPv4Transport::is_remote_locator_allowed(const Locator_t& locator) const
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+    if (network_whitelist_.empty() || IPLocator::isMulticast(locator))
+    {
+        return true;
+    }
+    auto ip = asio::ip::address_v4(asio::ip::address_v4::bytes_type{ locator.get_address(12),
+                                                                     locator.get_address(13),
+                                                                     locator.get_address(14),
+                                                                     locator.get_address(15) });
+    auto it1 = prefix_len_whitelist_.begin();
+    for(auto it = network_whitelist_.begin(); it != network_whitelist_.end(); it++, it1++) {
+        auto network = asio::ip::network_v4(ip, *it1).network();
+        auto whitelist_network = asio::ip::network_v4(*it, *it1).network();
+        if (network == whitelist_network) {
+            return true;
+        }
+    }
+    return false;
 }
 
 LocatorList_t UDPv4Transport::NormalizeLocator(
